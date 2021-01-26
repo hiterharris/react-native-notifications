@@ -13,13 +13,13 @@ const App = () => {
   const category = 'sports';
   const apiKey = 'c32de463ef6544e7ad7edba84af91d52';
   const endpoint = `http://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}`;
-  const endpoint2 = 'https://www.boredapi.com/api/activity/';
   const [data, setData] = useState();
+  const [newStory, setNewStory] = useState();
   const fetchData = async () => {
     try {
-      let response = await fetch(endpoint2)
+      let response = await fetch(endpoint)
       let json = await response.json()
-      setData(json)
+      setData(json.articles)
     } catch(error) {
       console.log('error: ', error);
     }
@@ -27,6 +27,7 @@ const App = () => {
 
   useEffect(() => {
     fetchData()
+    setNewStory(data[0])
   }, [0])
 
   useEffect(() => {
@@ -59,11 +60,10 @@ const App = () => {
     );
   };
 
-  const activity = data.activity;
   const sendNotifications = () => {
     PushNotificationIOS.presentLocalNotification({
-      alertTitle: 'Bored?',
-      alertBody: activity,
+      alertTitle: 'New Story',
+      alertBody: newStory.description,
     });
   };
 
