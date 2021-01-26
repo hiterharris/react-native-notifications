@@ -9,17 +9,13 @@ import {
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const App = () => {
-  const country = 'us';
-  const category = 'sports';
-  const apiKey = 'c32de463ef6544e7ad7edba84af91d52';
-  const endpoint = `http://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}`;
+  const endpoint = 'https://api.covidtracking.com/v1/us/current.json';
   const [data, setData] = useState();
-  const [newStory, setNewStory] = useState();
   const fetchData = async () => {
     try {
       let response = await fetch(endpoint)
       let json = await response.json()
-      setData(json.articles)
+      setData(json[0])
     } catch(error) {
       console.log('error: ', error);
     }
@@ -27,8 +23,8 @@ const App = () => {
 
   useEffect(() => {
     fetchData()
-    setNewStory(data[0])
   }, [0])
+
 
   useEffect(() => {
     PushNotificationIOS.addEventListener('register', onRegistered);
@@ -62,8 +58,17 @@ const App = () => {
 
   const sendNotifications = () => {
     PushNotificationIOS.presentLocalNotification({
-      alertTitle: 'New Story',
-      alertBody: newStory.description,
+      alertTitle: 'Positive Case Increase Today',
+      alertBody: increase,
+    });
+  };
+
+  const scheduleNotifications = () => {
+    PushNotificationIOS.scheduleLocalNotification({
+      alertTitle: 'Positive Case Increase Today',
+      alertBody: increase,
+      // fireDate: Date.now(),
+      // repeatInterval: 'hour'
     });
   };
 
